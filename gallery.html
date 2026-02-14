@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gallery Tour</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 40px 20px;
+        background: #ffffff;
+        font-family: Arial, sans-serif;
+        color: #111;
+        overflow-x: hidden;
+      }
+
+      /* --- MODERN INTERACTIVE LOADING --- */
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        background-color: #ffffff;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+      }
+
+      #drag-container {
+        position: relative;
+        width: 320px;
+        height: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .unlock-text {
+        position: absolute;
+        top: 20px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #ff9e36;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        opacity: 0.8;
+        transition: all 0.6s ease;
+        text-align: center;
+        width: 100%;
+      }
+
+      .unlock-success {
+        opacity: 1;
+        color: #111;
+        letter-spacing: 4px;
+        transform: translateY(-5px);
+      }
+
+      #cat-hero {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 8px solid #fff8f0;
+        box-shadow: 0 15px 35px rgba(255, 158, 54, 0.2);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        object-fit: cover;
+      }
+
+      .cat-glow {
+        box-shadow: 0 0 40px 15px rgba(255, 158, 54, 0.5) !important;
+        transform: scale(1.05);
+      }
+
+      .cat-jitter {
+        animation: jitter 0.4s infinite;
+      }
+
+      @keyframes jitter {
+        0%,
+        100% {
+          transform: scale(1.1);
+        }
+        50% {
+          transform: scale(1.15) rotate(-3deg);
+        }
+      }
+
+      #heart-dragger {
+        position: absolute;
+        bottom: 20px;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: grab;
+        user-select: none;
+        touch-action: none;
+        z-index: 10002;
+        font-size: 50px;
+        background: rgba(255, 158, 54, 0.1);
+        backdrop-filter: blur(5px);
+        border-radius: 24px;
+        border: 2px solid rgba(255, 158, 54, 0.3);
+        box-shadow:
+          0 10px 20px rgba(255, 158, 54, 0.2),
+          inset 0 4px 10px rgba(255, 255, 255, 0.8);
+        animation: floatingHeart 3s ease-in-out infinite;
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      #heart-dragger:active {
+        cursor: grabbing;
+        animation: none;
+        transform: scale(1.15) rotate(10deg);
+      }
+
+      @keyframes floatingHeart {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+
+      .heart-particle {
+        position: fixed;
+        pointer-events: none;
+        font-size: 28px;
+        z-index: 10001;
+        perspective: 1000px;
+        animation: flyUp3D 1.5s forwards;
+      }
+
+      @keyframes flyUp3D {
+        0% {
+          transform: translate(-50%, -50%) scale(0.5);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--md-x), -350px) rotateX(var(--md-r1))
+            scale(1.8);
+          opacity: 0;
+        }
+      }
+
+      #gallery-content-wrapper {
+        opacity: 0;
+        transition: opacity 1.5s ease-in-out;
+      }
+      .content-visible {
+        opacity: 1 !important;
+      }
+
+      .gallery-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+      }
+      .nav-back {
+        text-decoration: none;
+        color: white;
+        font-weight: 700;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 40px;
+        padding: 12px 24px;
+        background: #ff9e36;
+        border-radius: 50px;
+        width: fit-content;
+        opacity: 0;
+        transform: translateX(-20px);
+        transition: all 0.3s ease;
+      }
+      .header-section {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+      h1 {
+        font-size: 42px;
+        font-weight: 500;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.8s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+      .icon-camera {
+        width: 32px;
+        height: 32px;
+        stroke: #ff9e36;
+        stroke-width: 2;
+        fill: none;
+      }
+      .personal-note {
+        font-size: 18px;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s ease-out;
+        transition-delay: 0.2s;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+        margin-bottom: 50px;
+      }
+
+      /* This is the 'Base State' (hidden) */
+      .grid img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 30px;
+        opacity: 0;
+        transform: translateY(40px);
+        /* The transition must be here to animate the change */
+        transition:
+          opacity 1.2s ease-out,
+          transform 1.2s ease-out;
+      }
+
+      /* This is the 'Visible State' (triggered by JS) */
+      .grid img.reveal {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+      }
+
+      .grid img:hover {
+        transform: scale(1.03) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .see-more-link {
+        margin: 20px auto 60px;
+        text-align: center;
+        color: #ff9e36;
+        font-weight: 700;
+        font-size: 18px;
+        text-decoration: none;
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 1s ease;
+        display: inline-block;
+      }
+
+      /* For the header elements */
+      .reveal {
+        opacity: 1 !important;
+        transform: translate(0) !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading-screen">
+      <div id="drag-container">
+        <div class="unlock-text" id="status-text">Feed the cat first</div>
+        <img id="cat-hero" src="./img/cat-cute.jpg" alt="Guide" />
+        <div id="heart-dragger">🧡</div>
+      </div>
+    </div>
+
+    <div id="gallery-content-wrapper">
+      <div class="gallery-container">
+        <a href="index.html" class="nav-back" id="navBack"
+          ><span>←</span> Back to home</a
+        >
+        <div class="header-section">
+          <h1 id="mainTitle">
+            <svg
+              class="icon-camera"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+              />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+            Sunsets & Clouds
+          </h1>
+          <p class="personal-note" id="subNote">
+            I know you love these, so I took them for you. Each one reminded me
+            of the peace you deserve.
+          </p>
+        </div>
+
+        <div class="grid">
+          <img src="./flowers/IMG_7533 - Copy.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7534 - Copy.JPG" class="gallery-img" />
+          <img
+            src="./flowers/IMG_7535 - Copy - Copy (2).JPG"
+            class="gallery-img"
+          />
+          <img src="./flowers/IMG_7538 - Copy - Copy.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7539 - Copy (3).JPG" class="gallery-img" />
+          <img
+            src="./flowers/IMG_7542 - Copy - Copy (2).JPG"
+            class="gallery-img"
+          />
+          <img src="./flowers/IMG_7546 - Copy (2).JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7547 - Copy - Copy.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7548.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7564.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7575.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7577.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7578.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7579.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7581.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7582.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7583.JPG" class="gallery-img" />
+          <img src="./flowers/IMG_7584.JPG" class="gallery-img" />
+
+          <img src="./clouds/IMG_4938.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_4939.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_4940 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_4942.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_4943.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_4944.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_4945.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_4946.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_4947.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_4948.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5690.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5691 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5692.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5697.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5699.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5852.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5853.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5856 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5859.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5862 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5863 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5873 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_5998 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_6548 - Copy (2).JPG" class="gallery-img" />
+          <img src="./clouds/IMG_6597 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_6605 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_6624 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_6701 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_6863 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_6911 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_7010 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_7055 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_7206 - Copy.JPG" class="gallery-img" />
+          <img src="./clouds/IMG_7274 - Copy.JPG" class="gallery-img" />
+        </div>
+
+        <a class="see-more-link" id="seeMore" onclick="buttonHearts(event)"
+          >See more memories →</a
+        >
+      </div>
+    </div>
+
+    <script>
+      const heart = document.getElementById("heart-dragger");
+      const cat = document.getElementById("cat-hero");
+      const statusText = document.getElementById("status-text");
+
+      heart.onmousedown = (e) => startDrag(e.clientX, e.clientY);
+      heart.ontouchstart = (e) =>
+        startDrag(e.touches[0].clientX, e.touches[0].clientY);
+
+      function startDrag(clientX, clientY) {
+        const rect = heart.getBoundingClientRect();
+        let shiftX = clientX - rect.left;
+        let shiftY = clientY - rect.top;
+
+        function moveAt(pageX, pageY) {
+          heart.style.position = "fixed";
+          heart.style.left = pageX - shiftX + "px";
+          heart.style.top = pageY - shiftY + "px";
+          const catRect = cat.getBoundingClientRect();
+          if (
+            pageX > catRect.left &&
+            pageX < catRect.right &&
+            pageY > catRect.top &&
+            pageY < catRect.bottom
+          ) {
+            cat.classList.add("cat-glow");
+          } else {
+            cat.classList.remove("cat-glow");
+          }
+        }
+
+        function onMouseMove(e) {
+          moveAt(e.clientX, e.clientY);
+        }
+        function onTouchMove(e) {
+          moveAt(e.touches[0].clientX, e.touches[0].clientY);
+        }
+
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("touchmove", onTouchMove);
+
+        document.onmouseup = document.ontouchend = () => {
+          document.removeEventListener("mousemove", onMouseMove);
+          document.removeEventListener("touchmove", onTouchMove);
+          const hRect = heart.getBoundingClientRect();
+          const cRect = cat.getBoundingClientRect();
+          if (
+            hRect.left < cRect.right &&
+            hRect.right > cRect.left &&
+            hRect.top < cRect.bottom &&
+            hRect.bottom > cRect.top
+          ) {
+            heart.style.display = "none";
+            statusText.innerHTML = "Yum, yum...";
+            statusText.classList.add("unlock-success");
+            startAdventure();
+          } else {
+            heart.style.position = "absolute";
+            heart.style.left = "";
+            heart.style.top = "";
+            cat.classList.remove("cat-glow");
+          }
+        };
+      }
+
+      function startAdventure() {
+        const loader = document.getElementById("loading-screen");
+        const content = document.getElementById("gallery-content-wrapper");
+        cat.classList.add("cat-jitter");
+        for (let i = 0; i < 25; i++) {
+          createHeart(window.innerWidth / 2, window.innerHeight / 2);
+        }
+        setTimeout(() => {
+          loader.style.opacity = "0";
+          loader.style.transform = "scale(1.1)";
+          setTimeout(() => {
+            loader.style.display = "none";
+            content.classList.add("content-visible");
+            setTimeout(() => {
+              document.getElementById("navBack").classList.add("reveal");
+              document.getElementById("mainTitle").classList.add("reveal");
+              document.getElementById("subNote").classList.add("reveal");
+              initScrollObserver();
+            }, 300);
+          }, 800);
+        }, 1100);
+      }
+
+      function createHeart(x, y) {
+        const p = document.createElement("div");
+        p.className = "heart-particle";
+        p.innerHTML = "🧡";
+        p.style.left = x + "px";
+        p.style.top = y + "px";
+        const drift = (Math.random() - 0.5) * 500;
+        p.style.setProperty("--md-x", drift + "px");
+        p.style.setProperty("--md-r1", Math.random() * 720 + "deg");
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1500);
+      }
+
+      function buttonHearts(e) {
+        for (let i = 0; i < 10; i++) {
+          createHeart(e.clientX, e.clientY);
+        }
+      }
+
+      function initScrollObserver() {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("reveal");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }, // Starts fading slightly before it hits the view
+        );
+
+        document
+          .querySelectorAll(".gallery-img")
+          .forEach((img) => observer.observe(img));
+        observer.observe(document.getElementById("seeMore"));
+      }
+    </script>
+  </body>
+</html>

@@ -2,8 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Made for yoou</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Made for her</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,6 +28,7 @@
       * {
         box-sizing: border-box;
         -webkit-font-smoothing: antialiased;
+        /* Prevents horizontal scroll on mobile caused by floating elements */
       }
 
       body {
@@ -32,7 +36,7 @@
         font-family: "Inter", sans-serif;
         background: #ffffff;
         color: var(--text-dark);
-        overflow: hidden; /* Prevent scroll during intro */
+        overflow-x: hidden; /* Critical for mobile flexibility */
       }
 
       /* --- MUSIC MODAL STYLES --- */
@@ -50,7 +54,7 @@
 
       .music-modal {
         background: white;
-        padding: 40px;
+        padding: 40px 20px;
         border-radius: 30px;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
         text-align: center;
@@ -75,6 +79,7 @@
       .music-modal:hover .music-icon-container {
         transform: scale(1.1) rotate(5deg);
       }
+
       /* --- INTRO OVERLAY STYLES --- */
       #intro-overlay {
         position: fixed;
@@ -89,18 +94,19 @@
           opacity 1s;
         padding: 20px;
         text-align: center;
-        visibility: hidden; /* Hidden until music agreed */
+        visibility: hidden;
         opacity: 0;
       }
 
       .intro-card {
         max-width: 500px;
+        width: 100%;
         transition: all 0.8s ease-in-out;
       }
 
       .intro-title {
         font-family: "Playfair Display", serif;
-        font-size: clamp(28px, 5vw, 42px);
+        font-size: clamp(24px, 8vw, 42px);
         margin-bottom: 20px;
         opacity: 0;
         transform: translateY(10px);
@@ -109,7 +115,7 @@
 
       .intro-text {
         color: var(--text-gray);
-        font-size: 18px;
+        font-size: clamp(16px, 4vw, 18px);
         line-height: 1.6;
         opacity: 0;
         transform: translateY(10px);
@@ -136,6 +142,7 @@
 
       .name-input {
         width: 100%;
+        max-width: 400px;
         padding: 15px;
         border: 2px solid white;
         background: rgba(255, 255, 255, 0.5);
@@ -146,10 +153,6 @@
         text-align: center;
         transition: 0.3s;
       }
-      .name-input:focus {
-        border-color: var(--accent-purple);
-        background: white;
-      }
 
       /* --- MAIN PAGE DESIGN --- */
       .page-wrapper {
@@ -157,29 +160,38 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        background:
-          radial-gradient(
-            circle at 10% 20%,
-            var(--bg-purple) 0%,
-            transparent 40%
-          ),
-          radial-gradient(
-            circle at 90% 80%,
-            var(--bg-orange) 0%,
-            transparent 40%
-          );
-        padding: 80px 20px 0 20px;
+        padding: 60px 20px;
         opacity: 0;
         transition: opacity 1s;
+        background:
+          radial-gradient(circle at 0% 0%, #fef3c7 0%, transparent 40%),
+          radial-gradient(circle at 100% 100%, #e0e7ff 0%, transparent 40%),
+          #ffffff;
+        background-size: 200% 200%;
+        animation: gradientShift 15s ease infinite;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 0%;
+        }
+        50% {
+          background-position: 100% 100%;
+        }
+        100% {
+          background-position: 0% 0%;
+        }
       }
 
       .hero-section {
         text-align: center;
         max-width: 900px;
-        margin-bottom: 60px;
+        margin-bottom: 40px;
+        width: 100%;
       }
+
       h1 {
-        font-size: clamp(36px, 7vw, 68px);
+        font-size: clamp(32px, 8vw, 68px);
         line-height: 1.15;
         margin: 0 0 20px 0;
         font-weight: 700;
@@ -193,6 +205,7 @@
         overflow: hidden;
         color: var(--accent-purple);
       }
+
       .rotating-text-wrapper span {
         display: block;
         height: 1.2em;
@@ -221,87 +234,19 @@
         }
       }
 
-      .profile-outside {
-        position: absolute;
-        top: 35%;
-        left: -190px;
-        background: white;
-        padding: 12px 18px;
-        border-radius: 50px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        z-index: 10;
-        animation: float 6s infinite ease-in-out;
-      }
-
-      .avatar {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid white;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      }
-      .status-dot {
-        width: 8px;
-        height: 8px;
-        background: #22c55e;
-        border-radius: 50%;
-      }
-
-      .reveal {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-      }
-      .reveal.active {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      @keyframes bubblePop {
-        0% {
-          transform: scale(0.5) translateY(0);
-          opacity: 0;
-        }
-        20% {
-          transform: scale(1.1) translateY(-20px);
-          opacity: 1;
-        }
-        100% {
-          transform: scale(0.8) translateY(-60px);
-          opacity: 0;
-        }
-      }
-
-      .pop-text {
-        position: absolute;
-        background: var(--text-dark);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 14px;
-        pointer-events: none;
-        z-index: 100;
-        animation: bubblePop 1.5s forwards ease-out;
-        white-space: nowrap;
-        left: 50%;
-        transform: translateX(-50%);
-      }
-
+      /* --- RESPONSIVE MOCKUP CONTAINER --- */
       .mockup-container {
         position: relative;
         width: 100%;
         max-width: 380px;
-        margin-bottom: 100px;
+        margin: 40px auto 100px auto;
       }
+
       .phone-frame {
         background: white;
-        border: 12px solid #1a1a1a;
-        border-radius: 50px;
-        height: 720px;
+        border: 10px solid #1a1a1a;
+        border-radius: 45px;
+        height: 700px; /* Base height for desktop/large iOS */
         width: 100%;
         overflow: hidden;
         position: relative;
@@ -310,9 +255,19 @@
         flex-direction: column;
       }
 
+      /* Adjust height for smaller iPhone screens (SE, Mini) */
+      @media (max-height: 750px) {
+        .phone-frame {
+          height: 600px;
+        }
+        .mockup-container {
+          max-width: 320px;
+        }
+      }
+
       .phone-content {
         flex-grow: 1;
-        padding: 15px 25px 25px 25px;
+        padding: 10px 20px 20px 20px;
         overflow-y: auto;
         scrollbar-width: none;
       }
@@ -320,21 +275,93 @@
         display: none;
       }
 
+      /* --- FLOATING ELEMENTS FLEXIBILITY --- */
+      .profile-outside {
+        position: absolute;
+        top: 15%;
+        left: -160px; /* Offset for desktop */
+        background: white;
+        padding: 10px 15px;
+        border-radius: 50px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10;
+        animation: float 6s infinite ease-in-out;
+        white-space: nowrap;
+      }
+
+      .float-1 {
+        position: absolute;
+        top: 5%;
+        right: -130px; /* Offset for desktop */
+        width: 150px;
+        background: white;
+        border-radius: 20px;
+        padding: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        z-index: 5;
+        animation: float 6s infinite ease-in-out;
+      }
+
+      /* Responsive adjustment for all iPhones */
+      @media (max-width: 768px) {
+        .profile-outside {
+          left: -20px;
+          top: -30px;
+          transform: scale(0.9);
+        }
+        .float-1 {
+          right: -20px;
+          top: -50px;
+          transform: scale(0.9);
+        }
+      }
+
+      /* Extra small iPhone adjustment */
+      @media (max-width: 380px) {
+        .profile-outside {
+          left: 0;
+          top: -45px;
+        }
+        .float-1 {
+          right: 0;
+          top: -95px;
+        }
+        .mockup-container {
+          margin-top: 100px; /* Give room for top floats */
+        }
+      }
+
+      .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid white;
+      }
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+      }
+
       .mood-grid {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        gap: 10px;
-        margin: 25px 0;
+        gap: 8px;
+        margin: 20px 0;
       }
       .mood-btn {
         background: #f8f9fa;
         border: 2px solid #eee;
         border-radius: 12px;
-        padding: 12px 0;
-        font-size: 24px;
+        padding: 10px 0;
+        font-size: 20px;
         cursor: pointer;
         transition: 0.2s;
-        position: relative;
       }
       .mood-btn.selected {
         background: var(--accent-purple);
@@ -344,7 +371,7 @@
 
       .action-btn {
         width: 100%;
-        padding: 18px;
+        padding: 16px;
         border: none;
         border-radius: 16px;
         background: var(--accent-purple);
@@ -354,34 +381,32 @@
         transition: 300ms;
       }
       .action-btn:hover {
-        background: white;
-        color: var(--accent-purple);
-        border: 1px solid var(--accent-purple);
+        background: rgba(255, 158, 54, 0.9);
+
+        box-shadow: 0 10px 30px rgba(216, 151, 10, 0.3);
+        transform: translateY(-3px);
       }
 
       .message-box {
-        margin-top: 25px;
-        padding: 24px;
-        background: rgba(255, 255, 255, 0.85);
+        position: relative; /* Essential for the ::before positioning */
+        margin-top: 20px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(12px);
-        border-radius: 24px;
+        -webkit-backdrop-filter: blur(12px); /* Safari support */
+        border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.5);
-        min-height: 100px;
+
+        /* Initial state for entry animation */
         opacity: 0;
-        transform: translateY(20px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        position: relative;
-        overflow: hidden;
-      }
-      .message-box:hover {
-        box-shadow: 0 20px 50px rgba(255, 215, 56, 0.1);
-      }
-      .message-box.show {
-        opacity: 1;
-        transform: translateY(0);
+        transform: translateY(15px);
+        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+        /* Applying the float animation once shown */
+        cursor: pointer;
       }
 
+      /* Corrected Hover Logic for Pseudo-element */
       .message-box::before {
         content: "";
         position: absolute;
@@ -389,69 +414,55 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(
-          90deg,
-          var(--accent-purple),
-          var(--accent-pink)
-        );
+        border-radius: 20px 20px 0 0;
+        background: transparent;
+        transition: background 0.3s ease;
       }
 
-      .floating-card {
-        position: absolute;
-        background: white;
-        border-radius: 20px;
-        padding: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        z-index: 5;
+      .message-box:hover {
+        box-shadow: 0 10px 40px rgba(255, 167, 60, 0.1);
+        /* Gentle lift on hover */
       }
-      .float-1 {
-        top: 15%;
-        right: -140px;
-        width: 160px;
-        animation: float 6s infinite ease-in-out;
+
+      /* State triggered by JS */
+      .message-box.show {
+        opacity: 1;
       }
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-20px);
-        }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s ease-out;
+      }
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
       }
 
       footer {
         width: 100%;
-        background: #fafafa;
-        border-top: 1px solid #eee;
-        padding: 60px 20px;
+        padding: 40px 20px;
         text-align: center;
       }
       .copyright {
-        font-size: 12px;
+        font-size: 11px;
         color: #999;
-        margin-top: 10px;
       }
 
-      .page-wrapper {
-        background:
-          radial-gradient(circle at 0% 0%, #fef3c7 0%, transparent 40%),
-          radial-gradient(circle at 100% 100%, #e0e7ff 0%, transparent 40%),
-          #ffffff;
-        background-size: 200% 200%;
-        animation: gradientShift 15s ease infinite;
-      }
-
-      @keyframes gradientShift {
-        0% {
-          background-position: 0% 0%;
-        }
-        50% {
-          background-position: 100% 100%;
-        }
-        100% {
-          background-position: 0% 0%;
-        }
+      /* Global Animation for "Pop" text */
+      .pop-text {
+        position: absolute;
+        background: var(--text-dark);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        pointer-events: none;
+        z-index: 100;
+        animation: bubblePop 1.5s forwards ease-out;
+        white-space: nowrap;
+        left: 50%;
+        transform: translateX(-50%);
       }
 
       @keyframes bubblePop {
@@ -460,45 +471,71 @@
           opacity: 0;
         }
         20% {
-          transform: scale(1.1) translateY(-20px);
+          transform: scale(1.1) translateY(-15px);
           opacity: 1;
         }
         100% {
-          transform: scale(0.8) translateY(-60px);
+          transform: scale(0.8) translateY(-40px);
           opacity: 0;
         }
       }
 
-      .pop-text {
+      /* --- UPDATED: MODERN GALLERY ICON STYLES --- */
+      .gallery-trigger-modern {
+        position: relative;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .gallery-trigger-modern:hover .hover-label {
+        opacity: 1;
+        bottom: -22px;
+      }
+
+      .icon-box {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #eee;
+        transition: 0.3s;
+      }
+
+      .gallery-trigger-modern:hover .icon-box {
+        background: white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border-color: var(--accent-purple);
+      }
+
+      .hover-label {
         position: absolute;
-        background: var(--text-dark);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 14px;
-        pointer-events: none;
-        z-index: 100;
-        animation: bubblePop 1.5s forwards ease-out;
-        white-space: nowrap;
+        bottom: -28px;
         left: 50%;
         transform: translateX(-50%);
+        font-size: 9px;
+        font-weight: 800;
+        color: var(--accent-purple);
+        opacity: 0;
+        transition: 0.3s;
+        white-space: nowrap;
+        letter-spacing: 0.5px;
+      }
+
+      /* Keyframes for floating animation */
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
       }
     </style>
   </head>
   <body>
-    <!-- <div id="music-modal-overlay">
-      <div class="music-modal">
-        <span class="music-icon">🎵</span>
-        <h2 style="font-family: &quot;Playfair Display&quot;, serif">
-          Turn on the vibe?
-        </h2>
-        <p style="color: var(--text-gray); margin-bottom: 25px">
-          This experience is better with background music. Would you like to
-          play it?
-        </p>
-        <button class="action-btn" onclick="acceptMusic()">Yes, please!</button>
-      </div>
-    </div> -->
     <div id="music-modal-overlay">
       <div class="music-modal">
         <div class="music-icon-container">
@@ -529,8 +566,7 @@
         <p
           style="color: var(--text-gray); margin-bottom: 25px; font-size: 15px"
         >
-          This experience is better with background music. Would you like to
-          play it?
+          This experience is better with background music.
         </p>
         <div style="display: flex; flex-direction: column; gap: 10px">
           <button class="action-btn" onclick="acceptMusic()">
@@ -562,7 +598,6 @@
       <div class="intro-card" id="introCard">
         <h2 class="intro-title" id="introTitle"></h2>
         <p class="intro-text" id="introText"></p>
-
         <div id="inputGroup">
           <input
             type="text"
@@ -600,7 +635,7 @@
           class="reveal"
           style="
             color: var(--text-gray);
-            font-size: 19px;
+            font-size: 18px;
             max-width: 600px;
             margin: 0 auto;
           "
@@ -634,59 +669,98 @@
         </div>
 
         <div class="floating-card float-1">
-          <small style="color: #9ca3af; font-weight: 600">DAILY STREAK</small>
-          <div
+          <small style="color: #9ca3af; font-weight: 600"
+            >CLICK THE GALLERY</small
+          >
+          <!-- <div
             id="streakDisplay"
             style="font-size: 20px; font-weight: 700; margin-top: 5px"
           >
             🔥 12 Days
-          </div>
+          </div> -->
         </div>
-
         <div class="phone-frame">
-          <div
-            style="
-              width: 100px;
-              height: 28px;
-              background: #000;
-              margin: 15px auto;
-              border-radius: 20px;
-            "
-          ></div>
           <div class="phone-content">
             <div
               style="
                 display: flex;
                 align-items: center;
-                gap: 12px;
+                justify-content: space-between;
+                margin-top: 20px;
                 margin-bottom: 25px;
               "
             >
-              <img src="./img/princess-jasmin.png" class="avatar" alt="User" />
-              <div style="text-align: left">
-                <div
-                  id="timeGreeting"
-                  style="
-                    font-size: 12px;
-                    color: var(--text-gray);
-                    font-weight: 600;
-                  "
-                >
-                  Hello,
-                </div>
-                <div
-                  class="user-dynamic-name"
-                  style="font-weight: 700; font-size: 18px"
-                >
-                  Princess Jasmin
+              <div style="display: flex; align-items: center; gap: 12px">
+                <img
+                  src="./img/princess-jasmin.png"
+                  class="avatar"
+                  alt="User"
+                />
+                <div style="text-align: left">
+                  <div
+                    id="timeGreeting"
+                    style="
+                      font-size: 11px;
+                      color: var(--text-gray);
+                      font-weight: 600;
+                      letter-spacing: 0.5px;
+                    "
+                  >
+                    Hello,
+                  </div>
+                  <div
+                    class="user-dynamic-name"
+                    style="
+                      font-weight: 700;
+                      font-size: 18px;
+                      color: var(--text-dark);
+                    "
+                  >
+                    Princess Jasmin
+                  </div>
                 </div>
               </div>
+
+              <a
+                href="gallery.html"
+                onclick="goToGallery()"
+                style="text-decoration: none; color: inherit"
+              >
+                <div class="gallery-trigger-modern">
+                  <div class="icon-box">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      style="color: var(--accent-purple)"
+                    >
+                      <rect
+                        x="3"
+                        y="3"
+                        width="18"
+                        height="18"
+                        rx="2"
+                        ry="2"
+                      ></rect>
+                      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                      <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                  </div>
+                  <span class="hover-label">GALLERY</span>
+                </div>
+              </a>
             </div>
 
             <h2
               style="
-                font-family: Arial, serif;
-                font-size: 32px;
+                font-family: Arial, sans-serif;
+                font-size: 28px;
                 margin: 0 0 8px 0;
               "
             >
@@ -696,7 +770,7 @@
               style="
                 color: var(--text-gray);
                 font-size: 14px;
-                margin-bottom: 30px;
+                margin-bottom: 20px;
               "
             >
               How do you feel today?
@@ -717,18 +791,18 @@
             <div class="message-box" id="messageBox">
               <p
                 id="messageText"
-                style="margin: 0; font-size: 15px; line-height: 1.6"
+                style="margin: 0; font-size: 14px; line-height: 1.6"
               ></p>
             </div>
 
-            <div style="margin-top: 40px">
+            <div style="margin-top: 30px">
               <div
                 style="
                   font-weight: 700;
                   font-size: 11px;
                   text-transform: uppercase;
                   color: #999;
-                  margin-bottom: 15px;
+                  margin-bottom: 10px;
                 "
               >
                 Recent Reflections
@@ -747,7 +821,7 @@
     </div>
 
     <script>
-      // Load YouTube Iframe API
+      // 1. Load YouTube Iframe API
       var tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName("script")[0];
@@ -758,7 +832,7 @@
         player = new YT.Player("youtube-player", {
           height: "0",
           width: "0",
-          videoId: "QTYivnasK5I", // Your ID from link
+          videoId: "QTYivnasK5I",
           playerVars: {
             autoplay: 0,
             loop: 1,
@@ -771,22 +845,27 @@
       }
 
       function onPlayerReady(event) {
-        // Player is ready, wait for user click
+        // Player is ready, but we wait for user interaction or "Returning User" logic
       }
 
+      // 2. Music Modal Logic
       function acceptMusic() {
-        // Start Music
-        if (player) {
+        if (player && typeof player.playVideo === "function") {
           player.playVideo();
-          player.setVolume(40); // Soft background music
+          player.setVolume(40);
         }
+        closeMusicModal();
+      }
 
-        // Hide Modal
+      function declineMusic() {
+        closeMusicModal();
+      }
+
+      function closeMusicModal() {
         const musicModal = document.getElementById("music-modal-overlay");
         musicModal.style.opacity = "0";
         setTimeout(() => {
           musicModal.style.display = "none";
-          // Start Intro Sequence
           const intro = document.getElementById("intro-overlay");
           intro.style.visibility = "visible";
           intro.style.opacity = "1";
@@ -794,14 +873,19 @@
         }, 500);
       }
 
+      // 3. Intro Messages Sequence
       const introMessages = [
+        {
+          title: "How are you today?",
+          text: "I hope and pray you felt God’s love like a warm embrace in every moment.",
+        },
         {
           title: "Pause for a moment...",
           text: "Before we begin, remember that you are loved by God.",
         },
         {
           title: "You are enough.",
-          text: "Whatever happened today, you handled it with grace. God is proud of you.",
+          text: "Whatever happened today, you handled it with grace. God always loves you.",
         },
         {
           title: "A special space.",
@@ -812,7 +896,6 @@
           text: "You are always beautiful. Please tell me your name.",
         },
       ];
-
       let currentStep = 0;
 
       function showNextMessage() {
@@ -840,19 +923,31 @@
         }, 800);
       }
 
+      // 4. App Initialization & Session Handling
       function startMainApp() {
         const nameInput = document.getElementById("userNameInput").value;
         const nameDisplay = nameInput || "Princess Jasmin";
 
+        sessionStorage.setItem("introCompleted", "true");
+        sessionStorage.setItem("savedUserName", nameDisplay);
+
+        renderUserContent(nameDisplay);
+      }
+
+      function renderUserContent(name) {
         document.querySelectorAll(".user-dynamic-name").forEach((el) => {
-          el.textContent = nameDisplay;
+          el.textContent = name;
         });
 
         const overlay = document.getElementById("intro-overlay");
         const main = document.getElementById("pageWrapper");
+        const musicModal = document.getElementById("music-modal-overlay");
+
+        if (musicModal) musicModal.style.display = "none";
 
         overlay.style.opacity = "0";
         overlay.style.transform = "translateY(-100%)";
+        overlay.style.transition = "0.8s ease-in-out";
         main.style.opacity = "1";
         document.body.style.overflow = "auto";
 
@@ -866,8 +961,41 @@
         }, 500);
       }
 
-      // --- MOOD & API LOGIC --- REPLACED BY THIS ->
-      // --- 2. MOOD & API LOGIC ---
+      // 5. Navigation & Music Progress Saving
+      function goToGallery() {
+        if (player && typeof player.getCurrentTime === "function") {
+          const currentTime = player.getCurrentTime();
+          sessionStorage.setItem("musicTimestamp", currentTime);
+        }
+        window.location.href = "gallery.html";
+      }
+
+      // 6. Returning User & Music Resume Logic
+      window.addEventListener("DOMContentLoaded", () => {
+        if (sessionStorage.getItem("introCompleted") === "true") {
+          const savedName =
+            sessionStorage.getItem("savedUserName") || "Princess Jasmin";
+          renderUserContent(savedName);
+
+          const resumeMusic = () => {
+            if (
+              player &&
+              typeof player.playVideo === "function" &&
+              typeof player.seekTo === "function"
+            ) {
+              const savedTime = sessionStorage.getItem("musicTimestamp") || 0;
+              player.seekTo(parseFloat(savedTime), true);
+              player.playVideo();
+              player.setVolume(40);
+            } else {
+              setTimeout(resumeMusic, 500);
+            }
+          };
+          resumeMusic();
+        }
+      });
+
+      // 7. Mood & UI Support Functions
       let selectedMood = "default";
       const moodNames = {
         amazing: "Amazing! 🤩",
@@ -877,57 +1005,21 @@
         stressed: "Stressed 😓",
       };
 
-      // Expanded references for the API to fetch
       const bibleVerses = {
         amazing: [
           "Psalm 118:24",
           "Philippians 4:4",
           "Psalm 100:1",
           "1 Chronicles 16:34",
-          "Psalm 150:6",
-          "Psalm 103:1",
-          "Isaiah 12:2",
-          "Psalm 95:1",
         ],
-        good: [
-          "Psalm 107:1",
-          "Proverbs 17:22",
-          "Psalm 23:1",
-          "Galatians 5:22",
-          "Psalm 34:8",
-          "James 1:17",
-          "Psalm 37:4",
-          "1 Thessalonians 5:18",
-        ],
-        okay: [
-          "Isaiah 26:3",
-          "Joshua 1:9",
-          "Psalm 46:10",
-          "Matthew 6:34",
-          "Lamentations 3:22",
-          "Psalm 121:1",
-          "Proverbs 3:5",
-          "Psalm 16:11",
-        ],
-        tired: [
-          "Matthew 11:28",
-          "Isaiah 40:31",
-          "Psalm 62:1",
-          "Matthew 11:29",
-          "Psalm 4:8",
-          "Psalm 127:2",
-          "2 Thessalonians 3:13",
-          "Galatians 6:9",
-        ],
+        good: ["Psalm 107:1", "Proverbs 17:22", "Psalm 23:1", "Galatians 5:22"],
+        okay: ["Isaiah 26:3", "Joshua 1:9", "Psalm 46:10", "Matthew 6:34"],
+        tired: ["Matthew 11:28", "Isaiah 40:31", "Psalm 62:1", "Psalm 127:2"],
         stressed: [
           "John 14:27",
           "1 Peter 5:7",
           "Philippians 4:6",
           "Psalm 55:22",
-          "Matthew 11:30",
-          "Psalm 34:4",
-          "Philippians 4:7",
-          "John 16:33",
         ],
       };
 
@@ -941,7 +1033,7 @@
 
           const pop = document.createElement("div");
           pop.className = "pop-text";
-          pop.style.top = "-45px";
+          pop.style.top = "-30px";
           pop.textContent = moodNames[selectedMood];
           this.appendChild(pop);
           setTimeout(() => pop.remove(), 1500);
