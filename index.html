@@ -815,13 +815,24 @@
       }
 
       function onPlayerReady(event) {
-        // Feature: Auto-resume if coming back from gallery
-        if (sessionStorage.getItem("introCompleted") === "true") {
-          const savedTime = sessionStorage.getItem("musicTimestamp") || 0;
+        // Continuous Sync: Check localStorage for where we left off
+        const savedTime = localStorage.getItem("musicTimestamp");
+        if (savedTime) {
           player.seekTo(parseFloat(savedTime), true);
+        }
+
+        // Feature: Auto-resume if coming back from gallery or already accepted
+        if (sessionStorage.getItem("introCompleted") === "true") {
           player.playVideo();
           player.setVolume(40);
         }
+
+        // Start the continuous saver
+        setInterval(() => {
+          if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+            localStorage.setItem("musicTimestamp", player.getCurrentTime());
+          }
+        }, 1000);
       }
 
       // 2. Music Modal Logic
@@ -931,11 +942,10 @@
         }, 500);
       }
 
-      // 5. NAVIGATION & MUSIC PROGRESS SAVING (The Feature)
+      // 5. NAVIGATION & MUSIC PROGRESS SAVING
       function goToGallery() {
         if (player && typeof player.getCurrentTime === "function") {
-          const currentTime = player.getCurrentTime();
-          sessionStorage.setItem("musicTimestamp", currentTime);
+          localStorage.setItem("musicTimestamp", player.getCurrentTime());
         }
         window.location.href = "gallery.html";
       }

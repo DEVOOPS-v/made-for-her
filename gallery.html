@@ -373,16 +373,15 @@
       const statusText = document.getElementById("status-text");
       const music = document.getElementById("bgMusic");
 
-      // Sync music time between pages
+      // --- SYNC MUSIC LOGIC ---
       window.addEventListener("load", () => {
         const savedTime = localStorage.getItem("musicTime");
         if (savedTime) music.currentTime = parseFloat(savedTime);
       });
 
-      // Save time continuously
       setInterval(() => {
         if (!music.paused) localStorage.setItem("musicTime", music.currentTime);
-      }, 1000);
+      }, 500); // Save time every half second
 
       heart.onmousedown = (e) => startDrag(e.clientX, e.clientY);
       heart.ontouchstart = (e) =>
@@ -434,7 +433,10 @@
             heart.style.display = "none";
             statusText.innerHTML = "Yum, yum...";
             statusText.classList.add("unlock-success");
-            music.play(); // Music starts when cat is fed (interaction requirement)
+
+            // Interaction triggered: Resume music from saved time
+            music.play();
+
             startAdventure();
           } else {
             heart.style.position = "absolute";
