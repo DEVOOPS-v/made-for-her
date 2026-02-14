@@ -219,7 +219,6 @@
         margin-bottom: 50px;
       }
 
-      /* This is the 'Base State' (hidden) */
       .grid img {
         width: 100%;
         height: 400px;
@@ -227,13 +226,11 @@
         border-radius: 30px;
         opacity: 0;
         transform: translateY(40px);
-        /* The transition must be here to animate the change */
         transition:
           opacity 1.2s ease-out,
           transform 1.2s ease-out;
       }
 
-      /* This is the 'Visible State' (triggered by JS) */
       .grid img.reveal {
         opacity: 1 !important;
         transform: translateY(0) !important;
@@ -258,7 +255,6 @@
         display: inline-block;
       }
 
-      /* For the header elements */
       .reveal {
         opacity: 1 !important;
         transform: translate(0) !important;
@@ -266,6 +262,10 @@
     </style>
   </head>
   <body>
+    <audio id="bgMusic" loop>
+      <source src="music.mp3" type="audio/mpeg" />
+    </audio>
+
     <div id="loading-screen">
       <div id="drag-container">
         <div class="unlock-text" id="status-text">Feed the cat first</div>
@@ -371,6 +371,18 @@
       const heart = document.getElementById("heart-dragger");
       const cat = document.getElementById("cat-hero");
       const statusText = document.getElementById("status-text");
+      const music = document.getElementById("bgMusic");
+
+      // Sync music time between pages
+      window.addEventListener("load", () => {
+        const savedTime = localStorage.getItem("musicTime");
+        if (savedTime) music.currentTime = parseFloat(savedTime);
+      });
+
+      // Save time continuously
+      setInterval(() => {
+        if (!music.paused) localStorage.setItem("musicTime", music.currentTime);
+      }, 1000);
 
       heart.onmousedown = (e) => startDrag(e.clientX, e.clientY);
       heart.ontouchstart = (e) =>
@@ -422,6 +434,7 @@
             heart.style.display = "none";
             statusText.innerHTML = "Yum, yum...";
             statusText.classList.add("unlock-success");
+            music.play(); // Music starts when cat is fed (interaction requirement)
             startAdventure();
           } else {
             heart.style.position = "absolute";
@@ -484,7 +497,7 @@
               }
             });
           },
-          { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }, // Starts fading slightly before it hits the view
+          { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
         );
 
         document
